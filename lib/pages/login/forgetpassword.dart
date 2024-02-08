@@ -1,8 +1,17 @@
+import 'package:fireapp/pages/login/utils.dart/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends StatefulWidget {
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
+            FirebaseAuth _auth = FirebaseAuth.instance;
+    TextEditingController email = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text('Forgot Password'),
@@ -26,6 +35,7 @@ class ForgotPasswordPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             TextFormField(
+              controller: email,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
@@ -40,6 +50,22 @@ class ForgotPasswordPage extends StatelessWidget {
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
+                 _auth
+                        .sendPasswordResetEmail(
+                            email: email.text.toString())
+                        .then((value) {
+                          Utils().errortoastMessage('Email has been send to your mail');
+                      print('done');
+                      Future.delayed(const Duration(milliseconds: 3000), () {
+                          Navigator.pop(context);
+                        });
+                      setState(() {
+                        // loading = false;
+                      });
+                    }).onError((error, stackTrace) {
+                      
+                      Utils().errortoastMessage(error.toString());
+                    });
                 // Add logic here to handle the forgot password functionality
                 // For example, sending a password reset email
               },

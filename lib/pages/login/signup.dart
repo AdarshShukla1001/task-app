@@ -1,4 +1,6 @@
-
+import 'package:fireapp/pages/login/utils.dart/utils.dart';
+import 'package:fireapp/pages/utils/route_func.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -12,6 +14,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    bool _isLogin = false;
+    final user = _auth.currentUser;
     return Scaffold(
       appBar: AppBar(
         title: Text('SignUp'),
@@ -39,17 +44,61 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Perform SignUp logic here
                 String email = _emailController.text;
                 String password = _passwordController.text;
-
-                // You can add your SignUp logic here (e.g., validate email and password)
-                print('Email: $email');
-                print('Password: $password');
+                await _auth
+                    .createUserWithEmailAndPassword(
+                  email: '$email',
+                  password: '$password',
+                )
+                    .then(
+                  (value) async {
+                    naviToLogin(context);
+                  },
+                ).onError((error, stackTrace) {
+                  Utils().errortoastMessage(error.toString());
+                });
               },
               child: Text('SignUp'),
             ),
+            SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      naviToForgot(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Text('Forgot Password'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('&'),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      naviToLogin(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Text('Login'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),

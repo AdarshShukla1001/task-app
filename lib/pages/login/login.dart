@@ -1,3 +1,5 @@
+import 'package:fireapp/pages/login/utils.dart/utils.dart';
+import 'package:fireapp/pages/utils/route_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -49,24 +51,55 @@ class _LoginPageState extends State<LoginPage> {
                 String password = _passwordController.text;
                 await _auth
                     .signInWithEmailAndPassword(
-                  email: 'ada@ada.com',
-                  password: 'password@ada.com',
-                )
+                      email: email,
+                      password: password,
+                    )
                     .then(
-                  (value) async {
-                    print('done');
-                    setState(() {
-                      // loading = false;
+                      (value) async {
+                        naviToHome(context);
+                      },
+                    ).onError((error, stackTrace){
+                       Utils().errortoastMessage(error.toString());
                     });
-
-                    // You can add your login logic here (e.g., validate email and password)
-                    print('Email: $email');
-                    print('Password: $password');
-                  },
-                );
               },
               child: Text('Login'),
             ),
+            SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      naviToForgot(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Text('Forgot Password'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('&'),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      naviToSignup(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Text('SignUp'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),

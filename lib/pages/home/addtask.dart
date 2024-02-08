@@ -1,69 +1,123 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class AddTaskScreen extends StatefulWidget {
+class AddTaskPage extends StatefulWidget {
   @override
-  _AddTaskScreenState createState() => _AddTaskScreenState();
+  _AddTaskPageState createState() => _AddTaskPageState();
 }
 
-class _AddTaskScreenState extends State<AddTaskScreen> {
-  TextEditingController _taskNameController = TextEditingController();
-  TextEditingController _deadlineController = TextEditingController();
+class _AddTaskPageState extends State<AddTaskPage> {
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  // TextEditingController _userController = TextEditingController();
+  String datetime = DateTime.now().toString();
+  bool _isDone=false;
+  // TextEditingController _deadlineController = TextEditingController();
+  // TextEditingController _completionDateController = TextEditingController();
+
+  // bool _isDone = false;
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    bool _isLogin = false;
+    final user = _auth.currentUser;
+
+    if (user != null) {
+      _isLogin = true;
+    } else {
+      _isLogin = false;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Task'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.all(16.0),
+        child: ListView(
           children: [
-            Text(
-              'Task Name',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10.0),
-            TextFormField(
-              controller: _taskNameController,
+            TextField(
+              controller: _nameController,
               decoration: InputDecoration(
-                hintText: 'Enter task name',
-                border: OutlineInputBorder(),
+                labelText: 'Task Name',
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
-              'Deadline',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10.0),
-            TextFormField(
-              controller: _deadlineController,
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _descriptionController,
               decoration: InputDecoration(
-                hintText: 'Enter deadline',
-                border: OutlineInputBorder(),
+                labelText: 'Description',
               ),
             ),
-            SizedBox(height: 20.0),
+            
+            SizedBox(height: 16.0),
+            CheckboxListTile(
+              title: Text('Done'),
+              value: _isDone,
+              onChanged: (value) {
+                setState(() {
+                  _isDone = value ?? false;
+                });
+              },
+            ),
+            // SizedBox(height: 16.0),
+            // TextField(
+            //   controller: _deadlineController,
+            //   decoration: InputDecoration(
+            //     labelText: 'Deadline',
+            //   ),
+            // ),
+            // SizedBox(height: 16.0),
+            // TextField(
+            //   controller: _completionDateController,
+            //   decoration: InputDecoration(
+            //     labelText: 'Completion Date',
+            //   ),
+            // ),
+            SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: () {
-                // Add logic here to handle adding the task
-                String taskName = _taskNameController.text;
-                String deadline = _deadlineController.text;
+                // Save task logic goes here
+                String name = _nameController.text;
+                String description = _descriptionController.text;
+                String user_ = user!.uid;
+                
 
-                // You can handle the data, save it, or send it to a database
-                print('Task Name: $taskName');
-                print('Deadline: $deadline');
+                final myMap = <String, String>{
+                  // "user": "${user_}",
+                  "name": "${name}",
+                  "description": '${description}',
+                  "done": '0',
+                  // 'saved':'${datetime}',
+                  'completed':'',
+                  't':"",
 
-                // After handling the data, you can navigate back to the previous screen
-                Navigator.pop(context);
+
+                };
+                // if (user == null) {
+                  DatabaseReference db = FirebaseDatabase.instance.ref('TaskData');
+                  db.push().set(myMap);
+                // }
+                // String deadline = _deadlineController.text;
+                // String completionDate = _completionDateController.text;
+
+                // You can process the data further, like adding to a list, database, etc.
+                // For simplicity, you can print them here.
+                print('Name: $name');
+                print('Description: $description');
+                print('User: $user');
+                // print('Done: $done');
+                // print('Deadline: $deadline');
+                // print('Completion Date: $completionDate');
+
+                // Once done, you might want to navigate back to the previous page or clear fields.
+                // Navigator.pop(context);
+                // _nameController.clear();
+                // _descriptionController.clear();
+                // _userController.clear();
+                // _deadlineController.clear();
+                // _completionDateController.clear();
               },
               child: Text('Add Task'),
             ),

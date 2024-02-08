@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '164947820549',
     projectId: 'taskapp-193bc',
     authDomain: 'taskapp-193bc.firebaseapp.com',
+    databaseURL: 'https://taskapp-193bc-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'taskapp-193bc.appspot.com',
     measurementId: 'G-MKC0RR44RM',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:164947820549:android:857f629e38da9eebaa9c6c',
     messagingSenderId: '164947820549',
     projectId: 'taskapp-193bc',
+    databaseURL: 'https://taskapp-193bc-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'taskapp-193bc.appspot.com',
   );
 
@@ -66,7 +68,9 @@ class DefaultFirebaseOptions {
     appId: '1:164947820549:ios:5483ab704224dc78aa9c6c',
     messagingSenderId: '164947820549',
     projectId: 'taskapp-193bc',
+    databaseURL: 'https://taskapp-193bc-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'taskapp-193bc.appspot.com',
+    iosClientId: '164947820549-9bp6dbhsc14oe5kf6f372dhg300hgbit.apps.googleusercontent.com',
     iosBundleId: 'com.example.fireapp',
   );
 
@@ -75,7 +79,9 @@ class DefaultFirebaseOptions {
     appId: '1:164947820549:ios:53d438926ad57afeaa9c6c',
     messagingSenderId: '164947820549',
     projectId: 'taskapp-193bc',
+    databaseURL: 'https://taskapp-193bc-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'taskapp-193bc.appspot.com',
+    iosClientId: '164947820549-di2s0uumc81qmbh0vpgt8bjsk8pmr220.apps.googleusercontent.com',
     iosBundleId: 'com.example.fireapp.RunnerTests',
   );
 }

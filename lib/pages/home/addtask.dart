@@ -1,3 +1,5 @@
+import 'package:fireapp/pages/login/utils.dart/utils.dart';
+import 'package:fireapp/pages/utils/route_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   TextEditingController _descriptionController = TextEditingController();
   // TextEditingController _userController = TextEditingController();
   String datetime = DateTime.now().toString();
-  bool _isDone=false;
+  bool _isDone = false;
   // TextEditingController _deadlineController = TextEditingController();
   // TextEditingController _completionDateController = TextEditingController();
 
@@ -50,7 +52,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 labelText: 'Description',
               ),
             ),
-            
+
             SizedBox(height: 16.0),
             CheckboxListTile(
               title: Text('Done'),
@@ -77,28 +79,30 @@ class _AddTaskPageState extends State<AddTaskPage> {
             // ),
             SizedBox(height: 32.0),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Save task logic goes here
                 String name = _nameController.text;
                 String description = _descriptionController.text;
                 String user_ = user!.uid;
-                
+               
 
-                final myMap = <String, String>{
+                final myMap = <String, dynamic>{
                   // "user": "${user_}",
                   "name": "${name}",
                   "description": '${description}',
-                  "done": '0',
-                  // 'saved':'${datetime}',
-                  'completed':'',
-                  't':"",
-
-
+                  "done": _isDone,
+                  'saved': datetime,
+                  'user_id': '${user_}'
                 };
                 // if (user == null) {
-                  DatabaseReference db = FirebaseDatabase.instance.ref('TaskData');
-                  db.push().set(myMap);
-                // }
+               try{
+                DatabaseReference db = FirebaseDatabase.instance.ref('TaskData');
+                await db.push().set(myMap);
+                naviToHome(context);
+                } catch (e){
+                  Utils().errortoastMessage('${e}');
+                }
+
                 // String deadline = _deadlineController.text;
                 // String completionDate = _completionDateController.text;
 

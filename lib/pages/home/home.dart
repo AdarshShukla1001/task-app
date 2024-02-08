@@ -1,44 +1,31 @@
+// import 'dart:js_interop';
+
 import 'package:fireapp/features/home/domain/entities/task.dart';
+import 'package:fireapp/pages/home/edittask.dart';
 import 'package:fireapp/pages/login/utils.dart/utils.dart';
 import 'package:fireapp/pages/utils/route_func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 // import 'package:your_package_name_here/task_entity.dart'; // Import your TaskEntity class
 
-class TaskListPage extends StatelessWidget {
-  List<TaskEntity> sampleTasks = [
-    TaskEntity(
-      id: 1,
-      name: 'Complete Flutter tutorial',
-      description: 'Follow a Flutter tutorial and build a sample app',
-      done: false,
-      deadLine: DateTime(2024, 2, 28), // Set deadline as 28th February 2024
-      completedIn: null,
-    ),
-    TaskEntity(
-      id: 2,
-      name: 'Prepare for interview',
-      description: 'Review data structures and algorithms',
-      done: true,
-      deadLine: DateTime(2024, 3, 15), // Set deadline as 15th March 2024
-      completedIn: DateTime(2024, 2, 15), // Set completion date as 15th February 2024
-    ),
-    TaskEntity(
-      id: 3,
-      name: 'Exercise',
-      description: 'Go for a run or visit the gym',
-      done: false,
-      deadLine: DateTime(2024, 2, 10), // Set deadline as 10th February 2024
-      completedIn: null,
-    ),
-  ];
-
+class TaskListPage extends StatefulWidget {
   TaskListPage({super.key});
 
+  @override
+  State<TaskListPage> createState() => _TaskListPageState();
+}
+
+class _TaskListPageState extends State<TaskListPage> {
+  late DatabaseReference query;
+  @override
+  void initState() {
+    super.initState();
+    query = FirebaseDatabase.instance.ref("TaskData");
+  }
+
   // List of tasks to display
-
-  // TaskListPage({required this.tasks});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,25 +46,38 @@ class TaskListPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: sampleTasks.length,
-        itemBuilder: (context, index) {
-          final task = sampleTasks[index];
-          return ListTile(
-            title: Text(task.name ?? 'No Name'),
-            subtitle: Text(task.description ?? 'No Description'),
-            trailing: Checkbox(
-              value: task.done ?? false,
-              onChanged: (newValue) {
-                // You can implement logic to update task completion here
-              },
-            ),
-            onTap: () {
-              // You can implement navigation to a task detail page here
-            },
-          );
-        },
-      ),
+      body: FirebaseAnimatedList(
+          query: query,
+          //   title: Text('${snapshot.child('name').value.toString()}' ?? 'Not Avaliable'),
+          //   subtitle: Text('${snapshot.child('description').value.toString()}' ?? 'Not Avaliable'),
+          itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
+            // snapshot.key
+            bool _isdone = false;
+            if (snapshot.child('done').value.toString() == 'true') {
+              _isdone = true;
+            }
+            return ListTile(
+              isThreeLine: true,
+              trailing: IconButton(
+                  onPressed: () {
+                    deleteTask(context, snapshot);
+                  },
+                  icon: Icon(Icons.delete)),
+              title: Text('${snapshot.child('name').value.toString()}' ?? 'No Name'),
+              subtitle: InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditTaskPage(data: snapshot,)));
+                  },
+                  child: Text('${snapshot.child('description').value.toString()}' ?? 'No Description')),
+              leading: Checkbox(
+                value: _isdone,
+                onChanged: (n) {
+                  isDoneChange(context, snapshot);
+                  // You can implement logic to update task completion here
+                },
+              ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           naviToAddTask(context);
@@ -85,6 +85,69 @@ class TaskListPage extends StatelessWidget {
         },
         child: Icon(Icons.add),
       ),
+    );
+  }
+
+  void deleteTask(BuildContext context, DataSnapshot data) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you Want to Delete Task'),
+          content: Text('${data.child('name').value.toString()}' ?? 'No Name'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () async {
+                try {
+                  await query.child('${data.key}').remove();
+                } catch (e) {
+                  Utils().errortoastMessage(e.toString());
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void isDoneChange(BuildContext context, DataSnapshot data) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Have you finished your Task'),
+          content: Text('${data.child('name').value.toString()}' ?? 'No Name'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () async {
+                try {
+                  DatabaseReference ref = query.child('${data.key}/done');
+                  await ref.set(true);
+                } catch (e) {
+                  Utils().errortoastMessage(e.toString());
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

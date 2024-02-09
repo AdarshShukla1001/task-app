@@ -1,3 +1,4 @@
+import 'package:fireapp/pages/home/functions/edit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -76,28 +77,31 @@ class _EditTaskPageState extends State<EditTaskPage> {
             SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: () async {
-                // Save task logic goes here
+
+                // // Save task logic goes here
                 String name = _nameController.text;
                 String description = _descriptionController.text;
                 String user_ = user!.uid;
 
-                final myMap = <String, dynamic>{
-                  // "user": "${user_}",
-                  "name": "${name}",
-                  "description": '${description}',
-                  "done": _isDone,
-                  'saved': datetime,
-                  'user_id': '${user_}'
-                };
-                // if (user == null) {
-                try {
-                  DatabaseReference db = FirebaseDatabase.instance.ref('TaskData').child('${widget.data.key}');
-                  ;
-                  await db.set(myMap);
-                  naviToHome(context);
-                } catch (e) {
-                  Utils().errortoastMessage('${e}');
-                }
+                EditTask(context, widget.data,name, description, _isDone, datetime, user_);
+
+                // final myMap = <String, dynamic>{
+                //   // "user": "${user_}",
+                //   "name": "${name}",
+                //   "description": '${description}',
+                //   "done": _isDone,
+                //   'saved': datetime,
+                //   'user_id': '${user_}'
+                // };
+                // // if (user == null) {
+                // try {
+                //   DatabaseReference db = FirebaseDatabase.instance.ref('TaskData').child('${widget.data.key}');
+                //   ;
+                //   await db.set(myMap);
+                //   naviToHome(context);
+                // } catch (e) {
+                //   Utils().errortoastMessage('${e}');
+                // }
               },
               child: Text('Edit Task'),
             ),

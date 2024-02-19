@@ -2,6 +2,8 @@ import 'package:fireapp/clean_architecture/core/data/sources/remote/task/task_ap
 import 'package:fireapp/clean_architecture/screens/task_screen/data/repository/task_repository_impl.dart';
 import 'package:fireapp/clean_architecture/screens/task_screen/domain/repository/task_repository.dart';
 import 'package:fireapp/clean_architecture/screens/task_screen/domain/usecase/add_task.dart';
+
+import 'package:fireapp/clean_architecture/screens/task_screen/domain/usecase/edit_task.dart';
 import 'package:fireapp/clean_architecture/screens/task_screen/domain/usecase/delete_task.dart';
 import 'package:fireapp/clean_architecture/screens/task_screen/domain/usecase/get_task.dart';
 import 'package:fireapp/clean_architecture/screens/task_screen/page/bloc/task_bloc/task_bloc.dart';
@@ -39,6 +41,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AddTaskUseCase>(
     AddTaskUseCase(sl())
+  );
+
+   sl.registerSingleton<EditTaskUseCase>(
+    EditTaskUseCase(sl())
   );
   
   sl.registerSingleton<DeleteTaskUseCase>(

@@ -21,14 +21,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   Widget build(BuildContext context) {
     FirebaseAuth _auth = FirebaseAuth.instance;
-    bool _isLogin = false;
+
     final user = _auth.currentUser;
 
-    if (user != null) {
-      _isLogin = true;
-    } else {
-      _isLogin = false;
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Task'),
@@ -50,7 +45,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 labelText: 'Description',
               ),
             ),
-
             SizedBox(height: 16.0),
             CheckboxListTile(
               title: Text('Done'),
@@ -61,37 +55,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 });
               },
             ),
-           
             SizedBox(height: 32.0),
             ElevatedButton(
-              onPressed: () async {
-                // Save task logic goes here
-                String name = _nameController.text;
-                String description = _descriptionController.text;
-                String user_ = user!.uid;
-               
-
-                final myMap = <String, dynamic>{
-                  // "user": "${user_}",
-                  "name": "${name}",
-                  "description": '${description}',
-                  "done": _isDone,
-                  'saved': datetime,
-                  'user_id': '${user_}'
-                };
-                // if (user == null) {
-               try{
-                DatabaseReference db = FirebaseDatabase.instance.ref('TaskData');
-                await db.push().set(myMap);
-                // naviToHome(context);
-                } catch (e){
-                  // Utils().errortoastMessage('${e}');
-                }
-
-                print('Description: $description');
-                print('User: $user');
-              
-              },
+              onPressed: () async {},
               child: Text('Add Task'),
             ),
           ],
